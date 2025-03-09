@@ -13,22 +13,28 @@ while True:
     if volatile['symbol'] == symbol:
         volatile = sorted(requests.get('https://api.binance.com/api/v3/ticker/24hr').json(), key=lambda x: float(x['priceChangePercent']), reverse=True)[1]
 
+    print(requests.get(f'https://api.binance.com/api/v3/ticker?symbol=RAREBTC').json())
+
     symbol = volatile['symbol']
     price = float(volatile['lastPrice'])
     quantity = amount / price
     wallet -= quantity * price
 
+    print(symbol, price, quantity, wallet)
+
     while True:
         time.sleep(1)
-
+        
         latest = float(requests.get(f'https://api.binance.com/api/v3/ticker/price?symbol={symbol}').json()['price'])
 
         if latest >= price:
             increase = wallet + quantity * latest - amount
 
-            print(f'{symbol} has INCREASED by ${latest - price}! Price is now ${latest}, and wallet will have ${wallet + quantity * latest} when sold.')
+            print(f'{symbol} has INCREASED by {latest - price:.8f}! Price is now ${latest:.8f}, and wallet will have ${wallet + quantity * latest:.8f} when sold.')
 
-            if increase >= amount + 1:
+            price = latest
+
+            if increase >= 1:
                 print(f'Selling ${increase}')
 
                 wallet += increase
@@ -38,7 +44,7 @@ while True:
 
             continue
 
-        print(f'{symbol} has DECREASED by {price - latest}! Price is now ${latest}, and wallet will have ${wallet + quantity * latest} when sold.')
+        print(f'{symbol} has DECREASED by {price - latest:.8f}! Price is now ${latest:.8f}, and wallet will have ${wallet + quantity * latest:.8f} when sold.')
 
         wallet += quantity * latest
 
