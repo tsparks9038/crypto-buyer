@@ -6,26 +6,19 @@ wallet = amount
 symbol = ''
 
 while True:
-    time.sleep(1)
-    
-    volatile = sorted(requests.get('https://api.binance.com/api/v3/ticker/24hr').json(), key=lambda x: float(x['priceChangePercent']), reverse=True)[0]
+    coins = requests.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&order=market_cap_asc&per_page=250&price_change_percentage=1h', 'x-cg-demo-api-key: CG-VsuBhYY5sKsk5bQZCcBfziaB').json()
 
-    if volatile['symbol'] == symbol:
-        volatile = sorted(requests.get('https://api.binance.com/api/v3/ticker/24hr').json(), key=lambda x: float(x['priceChangePercent']), reverse=True)[1]
+    for coin in coins:
+        if coin['price_change_percentage_24h'] and float(coin['price_change_percentage_24h']) > 0 and coin['symbol'] != symbol:
+            symbol = coin['symbol']
+            price = float(coin['current_price'])
+            id = coin['id']
 
-    print(requests.get(f'https://api.binance.com/api/v3/ticker?symbol=RAREBTC').json())
-
-    symbol = volatile['symbol']
-    price = float(volatile['lastPrice'])
     quantity = amount / price
     wallet -= quantity * price
 
-    print(symbol, price, quantity, wallet)
-
     while True:
-        time.sleep(1)
-        
-        latest = float(requests.get(f'https://api.binance.com/api/v3/ticker/price?symbol={symbol}').json()['price'])
+        latest = float(requests.get(f'https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&ids={id}&order=market_cap_asc&per_page=250&price_change_percentage=1h', 'x-cg-demo-api-key: CG-VsuBhYY5sKsk5bQZCcBfziaB').json()['current_price'])
 
         if latest >= price:
             increase = wallet + quantity * latest - amount
