@@ -1,0 +1,1 @@
+https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&ids=add-finance&order=market_cap_asc&per_page=250&price_change_percentage=1h

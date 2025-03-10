@@ -18,7 +18,9 @@ while True:
     wallet -= quantity * price
 
     while True:
-        latest = float(requests.get(f'https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&ids={id}&order=market_cap_asc&per_page=250&price_change_percentage=1h', 'x-cg-demo-api-key: CG-VsuBhYY5sKsk5bQZCcBfziaB').json()['current_price'])
+        time.sleep(60)
+
+        latest = float(requests.get(f'https://api.coingecko.com/api/v3/coins/markets?vs_currency=cad&ids={id}&order=market_cap_asc&per_page=250&price_change_percentage=1h', 'x-cg-demo-api-key: CG-VsuBhYY5sKsk5bQZCcBfziaB').json()[0]['current_price'])
 
         if latest >= price:
             increase = wallet + quantity * latest - amount
@@ -40,5 +42,7 @@ while True:
         print(f'{symbol} has DECREASED by {price - latest:.8f}! Price is now ${latest:.8f}, and wallet will have ${wallet + quantity * latest:.8f} when sold.')
 
         wallet += quantity * latest
+
+        time.sleep(3600)
 
         break
